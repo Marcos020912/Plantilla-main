@@ -1,0 +1,25 @@
+package com.example.AprendiendoSeguridad.Conf;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+public class SecurityConfiguration {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                .csrf(auth -> auth.disable()) // Deshabilitar CSRF para aplicaciones RESTful
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/api/public/**").permitAll(); // Rutas públicas
+                    auth.anyRequest().authenticated(); // Todas las demás requieren autenticación
+                })
+                .sessionManagement(session -> {
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);// Usar JWT
+                }).httpBasic().and()
+                .build();
+    }
+}
